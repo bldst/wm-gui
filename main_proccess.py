@@ -4,11 +4,14 @@ from datetime import datetime, timedelta
 import requests
 
 
-class main_process():
+class RivenOrdersProcess:
 
-    def __init__(self, days, count_orders):
-        global_items = []
-        self.count_orders = 15
+    def __init__(self, weapon_url, days, count_orders):
+        self.days = days
+        self.weapon_url = weapon_url
+        self.count_orders = count_orders
+        self.orders_json = []
+
 
     #查找价格
     def get_riven_price_(self, weapon_url):
