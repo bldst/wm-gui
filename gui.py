@@ -83,7 +83,7 @@ class AutoCompleteApp:
     def get_weponname(self):
         candidates = []
         global global_items  # 声明我们将要修改的是全局变量
-        with open('WM紫卡表.json', 'r', encoding='utf-8') as f:
+        with open('WM_riven_list.json', 'r', encoding='utf-8') as f:
             data = json.load(f)
             global_items = data['payload']['items']
         for names in global_items:
