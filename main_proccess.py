@@ -1,6 +1,4 @@
-import json
 from datetime import datetime, timedelta
-
 import requests
 
 
@@ -10,7 +8,26 @@ class RivenOrdersProcess:
         self.days = days
         self.weapon_url = weapon_url
         self.count_orders = count_orders
-        self.orders_json = []
+        # 尝试获取订单JSON数据
+        try:
+            self.orders_json = self.get_riven_price_(self.weapon_url)
+        except Exception as e:
+            print(f"错误：在获取订单JSON数据时发生错误: {e}")
+            return
+
+        if self.orders_json is not None:
+            # 尝试提取并过滤订单
+            try:
+                self.get_orders = self.extract_and_filter_orders(self.orders_json, self.count_orders, self.days)
+            except Exception as e:
+                print(f"错误：尝试提取过滤订单时出错，请检查传入的参数")
+                return
+
+        else:
+            self.get_orders = []
+
+        # 打印订单
+        self.print_orders = self.print_orders(self.get_orders)
 
 
     #查找价格
@@ -71,7 +88,9 @@ class RivenOrdersProcess:
             count += 1
         return filter_orders_res
 
-    #分析订单，提取重要项目
-    def analysis_orders(self, orders):
+    def print_orders(self, orders):
+        for order in orders:
+            print(order)
 
-        return
+
+
