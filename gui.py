@@ -1,7 +1,7 @@
 import json
 import tkinter as tk
 from datetime import datetime, timedelta
-from tkinter import ttk, messagebox
+from tkinter import ttk
 
 import requests
 
