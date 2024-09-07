@@ -9,8 +9,9 @@ class RivenOrdersProcess:
         weapon_url:武器的url_name
         days:需要查询多少天内的订单
         count_orders：需要查询多少个订单
-        通过封装这些功能，确保了代码的清晰性、可维护性和功能的易于访问性。
+
       """
+
     def __init__(self, weapon_url, days, count_orders):
         self.days = days
         self.weapon_url = weapon_url
@@ -36,7 +37,6 @@ class RivenOrdersProcess:
         # 打印订单
         self.print_orders = self.print_orders(self.get_orders)
 
-
     #查找价格
     def get_riven_price_(self, weapon_url):
         try:
@@ -51,7 +51,6 @@ class RivenOrdersProcess:
     def extract_and_filter_orders(self, orders_json, count_orders, days=30):
         """
                提取并筛选订单数据。
-
                根据给定的时间范围和订单数量限制，从JSON订单数据中提取并筛选出符合条件的订单。
                该函数主要关注在指定天数内创建的直接购买订单（排除拍卖订单）。
 
@@ -98,6 +97,3 @@ class RivenOrdersProcess:
     def print_orders(self, orders):
         for order in orders:
             print(order)
-
-
-

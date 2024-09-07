@@ -11,6 +11,7 @@ class RivenOcr:
     传入相对路径，返回识别结果
     结果为列表
     """
+
     def __init__(self, img_path):
         #获得当前项目路径
         self.project_path = os.path.dirname(os.path.abspath(__file__))
@@ -36,12 +37,13 @@ class RivenOcr:
             # 使用换行符 '\n' 分割文本
             output_list = output.split('\n')
             print(output_list)
-            # 过滤掉不包含汉字的元素和包含数字的元素
-            filtered_lines = [line for line in output_list if
-                              re.search(r"[\u4e00-\u9fff]+", line) and not re.search(r"\d+", line)]
-            # 过滤每一个元素中除了汉字的部分
-            for line in filtered_lines:
-                ocr_list.append(re.sub(r"[^\u4e00-\u9fff]", "", line))
+            # 过滤output_list中的每一个元素，只保留该元素的汉字部分
+            for line in output_list:
+                # 使用正则表达式匹配汉字
+                match = re.search(r'[\u4e00-\u9fff]+', line)
+                if match:
+                    # 提取匹配到的汉字部分并添加到列表中
+                    ocr_list.append(match.group())
 
         except subprocess.CalledProcessError as e:
             print(f"执行CMD命令时出错: {e}")
@@ -59,7 +61,8 @@ class RivenOcr:
                 if ratio > best_ratio and ratio > 50:
                     best_match = comparison_name
                     best_ratio = ratio
-            compare_result.append(best_match)
+            if best_match is not None:
+                compare_result.append(best_match)
 
         return compare_result
 
