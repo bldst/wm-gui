@@ -1,16 +1,14 @@
 import json
 import os
 from fuzzywuzzy import fuzz
-
+import sys
 from wx_ocr import WxOcr
-
 
 class PrimeOcr:
     """
     调用微信本地ocr，传入图片相对路径或绝对路径
     最终处理结果保存为成员变量process_result
     """
-
     def __init__(self, img_path):
         # 获得当前项目路径
         self.project_path = os.path.dirname(os.path.abspath(__file__))
@@ -18,6 +16,7 @@ class PrimeOcr:
         self.comparison_list = json.load(open("static/tradable_parts_name.json", "r", encoding="utf-8"))
         # 调用wx_ocr
         ocr_result = self.wx_ocr_result_callback(self.img_path)
+        print(ocr_result)
         # 最终处理要返回的结果process_result
         self.process_result = self.process_wxocr_result(ocr_result)
 
@@ -42,10 +41,14 @@ class PrimeOcr:
                 # 如果是比较对象自身，或者已经被处理过，则跳过
                 if j in processed_indices or i == j:
                     continue
+                try:
+                    # 计算两个文本在x轴和y轴上的距离
+                    distance_x = abs(item['pos']['x'] - other_item['pos']['x'])
+                    distance_y = abs(item['pos']['y'] - other_item['pos']['y'])
+                except KeyError:
+                    print("Error: Missing position information in OCR result.", item)
+                    continue
 
-                # 计算两个文本在x轴和y轴上的距离
-                distance_x = abs(item['pos']['x'] - other_item['pos']['x'])
-                distance_y = abs(item['pos']['y'] - other_item['pos']['y'])
                 # 计算两个文本直接的距离
                 # distance = (distance_x ** 2 + distance_y ** 2) ** 0.5
 
@@ -83,3 +86,12 @@ class PrimeOcr:
                 compare_result.append(best_match)
 
         return compare_result
+
+
+if __name__ == "__main__":
+    if len(sys.argv) < 2:
+        print("Usage: python my_class.py [your_name]")
+    else:
+        # 使用从命令行接收的第一个参数
+        obj = PrimeOcr(sys.argv[1])
+        print(obj.process_result)
