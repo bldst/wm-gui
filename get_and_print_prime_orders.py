@@ -20,7 +20,7 @@ class PrimeOrdersProcess:
     key为url_name，value为在线订单前三个价格列表
     """
 
-    def __init__(self, prime_url_name_list, search_online):
+    def __init__(self, prime_url_name_list, search_online=True):
         # 是否查询在线订单
         # 初始化一个字典，保存url_name，和三个最低价price1,price2,price3
         self.search_online = search_online
@@ -70,5 +70,5 @@ class PrimeOrdersProcess:
 
 
 if __name__ == "__main__":
-    prime_url_name_list = ['helios_prime_systems', 'mirage_prime_systems_blueprint']
+    prime_url_name_list = ['helios_prime_systems', 'mirage_prime_systems_blueprint','zylok','galatine_prime_handle','hystrix_prime_set','khora_prime_set']
     orders = PrimeOrdersProcess(prime_url_name_list)

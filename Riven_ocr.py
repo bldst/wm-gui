@@ -1,9 +1,7 @@
 import json
 import os
 import re
-
 from fuzzywuzzy import fuzz
-
 from wx_ocr import WxOcr
 
 
