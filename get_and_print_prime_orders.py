@@ -22,10 +22,10 @@ class PrimeOrdersProcess:
     {'galatine_prime_handle': '['galatine_prime_handle', '3', '4', '5']'}
     """
 
-    def __init__(self, prime_url_name_list, search_online=True):
+    def __init__(self, prime_url_name_list, search_online=False):
         # 是否查询在线订单
-        # 初始化一个字典，保存url_name，和三个最低价price1,price2,price3
         self.search_online = search_online
+        # 初始化一个字典，保存url_name，和三个最低价price1,price2,price3
         self.prime_dict = {}
         self.main(prime_url_name_list)
 
@@ -93,4 +93,4 @@ class PrimeOrdersProcess:
 
 if __name__ == "__main__":
     prime_url_name_list = ['galatine_prime_handle','hystrix_prime_set','khora_prime_set']
-    orders = PrimeOrdersProcess(prime_url_name_list,0)
+    orders = PrimeOrdersProcess(prime_url_name_list)

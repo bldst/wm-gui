@@ -5,37 +5,50 @@ import requests
 class RivenOrdersProcess:
     """
       处理裂隙订单的类
-        传入参数为： weapon_url，days,count_orders
+        传入参数为： weapon_url列表，days,count_orders
         weapon_url:武器的url_name
         days:需要查询多少天内的订单
         count_orders：需要查询多少个订单
-
+        数据保存在riven_dict字典中
+        {'magistar': ['magistar', 450, 450, 479, 480], 'arca_titron': ['arca_titron', 150, 160, 160, 170], 'torid': ['torid', 500, 500, 540, 550]}
       """
 
-    def __init__(self, weapon_url, days, count_orders):
+    def __init__(self, weapon_url_list, days, count_orders):
         self.days = days
-        self.weapon_url = weapon_url
+        self.weapon_url_list = weapon_url_list
         self.count_orders = count_orders
-        # 尝试获取订单JSON数据
-        try:
-            self.orders_json = self.get_riven_price_(self.weapon_url)
-        except Exception as e:
-            print(f"错误：在获取订单JSON数据时发生错误: {e}")
-            return
+        # 初始化一个字典，保存url_name，和count_orders数量的最低价
+        self.riven_dict = {}
 
-        if self.orders_json is not None:
-            # 尝试提取并过滤订单
+    def main(self):
+
+        # 尝试获取订单JSON数据
+        for weapon_url in self.weapon_url_list:
+            # 保存每笔订单的价格 列表
+            price_list = []
             try:
-                self.get_orders = self.extract_and_filter_orders(self.orders_json, self.count_orders, self.days)
+                orders_json = self.get_riven_price_(weapon_url)
             except Exception as e:
-                print(f"错误：尝试提取过滤订单时出错，请检查传入的参数")
+                print(f"错误：在获取订单JSON数据时发生错误: {e}")
                 return
 
-        else:
-            self.get_orders = []
+            if orders_json is not None:
+                # 尝试提取并过滤订单
+                try:
+                    get_orders = self.extract_and_filter_orders(orders_json, self.count_orders, self.days)
+                    for order in get_orders:
+                        # 保存每一笔订单的价格
+                        price_list.append(order['buyout_price'])
+                except Exception as e:
+                    print(f"错误：尝试提取过滤订单时出错，请检查传入的参数")
+                    return
 
+            else:
+
+                self.riven_dict[weapon_url] = [weapon_url] + price_list
+            self.riven_dict[weapon_url] = [weapon_url] + price_list
         # 打印订单
-        self.print_orders = self.print_orders(self.get_orders)
+        self.print_orders()
 
     #查找价格
     def get_riven_price_(self, weapon_url):
@@ -75,26 +88,30 @@ class RivenOrdersProcess:
         one_month_ago = now - timedelta(days=days)
         #保存符合条件的订单列表
         filter_orders_res = []
-        #订单计数器
-        count = 0
 
         # 提取一个月内的售卖订单
         for order in orders:
-            #如果是拍卖订单直接跳过
+            # 保存符合数量的订单就退出
+            if len(filter_orders_res) == count_orders:
+
+                break
+
+            # 如果是拍卖订单直接跳过
             if order['starting_price'] != order['buyout_price']:
                 continue
             create_time = datetime.fromisoformat(order['created'].replace("T", " ").replace("+00:00", ""))
-            #如果订单在指定天数内，就保存该订单
+            # 如果订单在指定天数内，就保存该订单
             if one_month_ago <= create_time:
                 filter_orders_res.append(order)
 
-            #订单保留数量
-            if count >= count_orders:
-                break
-            count += 1
         return filter_orders_res
 
-    def print_orders(self, orders):
-        for order in orders:
-            print(order)
+    # 打印字典里面的内容
+    def print_orders(self):
+        print(self.riven_dict)
 
+
+if __name__ == '__main__':
+    wepon_url_list = ['magistar','arca_titron','torid']
+    rivenprice = RivenOrdersProcess(wepon_url_list, days=30, count_orders=4)
+    rivenprice.main()
